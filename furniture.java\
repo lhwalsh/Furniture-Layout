@@ -1,0 +1,256 @@
+//	class that creates an object of furniture and orients and positions the piece of furniture
+
+import java.util.Scanner;
+import java.io.*;
+
+public class furniture {
+
+	private int X;
+	private int Y;
+	private String commands;
+	private char[][][] furnitureArray;
+
+	public furniture(int tempX, int tempY, String tempCommands, Scanner sc) {
+		X 	 = tempX;
+		Y 	 = tempY;
+		commands = tempCommands;
+		furnitureArray = constructFurnitureArray(sc);
+		fillArray(sc);
+	}
+
+	public char[][][] constructFurnitureArray(Scanner sc) {
+		char[][][] answer;
+		int height = 0;
+		int width  = 0;
+		if (sc.next() == "d") {
+			height = sc.nextInt();
+		}
+		if (sc.next() == "b") {
+			width = sc.nextInt();
+		}
+		answer = new char[height][width][2];
+		return answer;
+	}
+
+	public void executeCommands() {
+		commands = commands.toLowerCase();
+		for (int i = 0; i < commands.length(); i++) {
+                        if (commands.charAt(i) == 118) {
+                                flipVertically();
+                        } else if (commands.charAt(i) == 104) {
+                                flipHorizontally();
+                        } else if (commands.charAt(i) == 114) {
+                                rotate();
+                        }
+                }
+
+	}
+	
+	public void flipVertically() {
+                char tempY;
+                int endY = (furnitureArray[0].length - 1);
+		for (int i = 0; i < 3; i++) {
+                	for (int x = 0; x < furnitureArray.length/2; x++) {
+                	        for (int y = 0; y < furnitureArray[x].length; y++) {
+                	                tempY           	= furnitureArray[y][x][i];
+                        	        furnitureArray[y][x][i] = furnitureArray[y][endY][i];
+                        	        furnitureArray[y][endY][i] = tempY;
+                        	}
+                        	endY -= 1;
+                	}	
+		}
+
+	}
+	
+	public void flipHorizontally() {
+                int endX = furnitureArray.length - 1;
+                char tempX;
+		for (int i = 0; i < 3; i++) {
+                	for (int x = 0; x < furnitureArray.length/2; x++) {
+                	        for (int y = 0; y < furnitureArray[x].length; y++) {
+                	                tempX                  	   = furnitureArray[x][y][i];
+                	                furnitureArray[x][y][i]    = furnitureArray[endX][y][i];
+                	                furnitureArray[endX][y][i] = tempX;
+                	        }
+                	        endX -= 1;
+                	}
+		}
+
+	}
+
+	public void rotate() {
+                int endY     = furnitureArray[0].length - 1;
+                int endY1    = furnitureArray[0].length - 2;
+                int endX     = furnitureArray.length - 1;
+                int endX1    = furnitureArray.length - 2;
+                int x        = 0;
+                int y        = 0;
+                int x1       = 1;
+                int y1       = 1;
+                int counter  = 0;
+                int counter2 = 0;
+                char temp;
+		for (int q = 0; q < 3; q++) {
+                	for (int i = 0; i < furnitureArray.length/2; i++) {
+                	        for (int w = 0; w < ((furnitureArray[0].length-1) - counter2); w++) {
+                	                temp          		       = furnitureArray[x][y1][q];
+                	                furnitureArray[x][y1][q]       = furnitureArray[x1][endY][q];
+                	                furnitureArray[x1][endY][q]    = furnitureArray[endX][endY1][q];
+                	                furnitureArray[endX][endY1][q] = furnitureArray[endX1][y][q];
+                	                furnitureArray[endX1][y][q]    = temp;
+	
+	                                endX1 -= 1;
+	                                endY1 -= 1;
+	                                x1    += 1;
+	                                y1    += 1;
+	                        }
+	                        counter2 += 2;
+	                        counter  += 1;
+        	                endY     -= 1;
+	                        endX     -= 1;
+	                        y        += 1;
+	                        x        += 1;
+	                        endX1     = (furnitureArray.length - 2) - counter;
+	                        endY1     = (furnitureArray[i].length - 2) - counter;
+	                        x1        = 1 + counter;
+	                        y1        = 1 + counter;
+	                }
+		}
+
+	}
+
+	public char[][][] positionArray() {
+		char[][][] answer = null;
+		return answer;
+	}
+
+	public void fillArray(Scanner sc) {
+                if (sc.next() == "p") {
+                        plotPoint(sc);
+                }
+                if (sc.next() == "l") {
+			int x1 = sc.nextInt();
+			int y1 = sc.nextInt();
+			int x2 = sc.nextInt();
+			int y2 = sc.nextInt();
+			char c = sc.next().charAt(0);
+			int foregroundColor = sc.nextInt();
+			int backgroundColor = sc.nextInt();
+                        plotLine(x1, y1, x2, y2, c, foregroundColor, backgroundColor);
+                }
+		if (sc.next() == "c") {
+			plotCircle( int Cx, int Cy, float radius, char C, int FG, int BG, Canvas MyC 
+		}
+
+	}
+
+	public void plotLine( int x1, int y1, int x2, int y2, char C, int FG, int BG) {
+       		double m;
+        	double b;
+        	int temp;
+        	int x, y;
+	
+	        if ( x1 == x2 ) { // Vertical line
+	        	if ( y1 > y2 ) {
+	                	temp = y1;
+	                	y1 = y2;
+	                	y2 = temp;
+	            	}
+	            	for ( int i = y1; i <= y2; i++ ) {
+				for (int q = 0; q < 3; q++) {
+					furnitureArray[x1][i][q] = C;
+					furnitureArray[x1][i][q] = (char)FG;
+					furnitureArray[x1][i][q] = (char)BG;
+				}
+			}
+	        } else if ( y1 == y2 ) { // Horizontal line
+	        	if ( x1 > x2 ) {
+	                	temp = x1;
+	                	x1 = x2;
+	                	x2 = temp;
+	            	}
+	            	for ( int i = x1; i <= x2; i++ ) {
+				for (int q = 0; q < 3; q++) {
+					furnitureArray[i][y1][q] = C;
+					furnitureArray[i][y1][q] = (char)FG;
+					furnitureArray[i][y1][q] = (char)BG;
+				}
+			}
+	        } else {             // Diagonal Line
+        		m = ( y2 - y1 ) * 1.0 / ( x2 - x1 ); // * 1.0 to force
+        	                                             // floating point
+        	                                             // math
+        	    // y = mx + b, so
+        	    // b = y - mx  ....either point will solve for b
+        	    b = y1 - m * x1;  // m is double, so all the math will now
+        	                      // be floating point math...want that
+        	                      // precision!
+	
+	        	if ( Math.abs( m ) <= 1.0 ) { // "flatter" line, loop on
+	                                         // X's
+	                	if ( x2 < x1 ) { // swap points to start on left
+	                		temp = x1;
+		        	        x1 = x2;
+       	        			x2 = temp;
+       	        			temp = y1;
+       	        			y1 = y2;
+                			y2 = temp;
+                		}
+                		for ( x = x1; x <= x2; x++ ) {
+                			y = (int)( m * x + b );
+					for (int i = 0; i < 3; i++) {
+						furnitureArray[x][y][i] = C;
+						furnitureArray[x][y][i] = (char)FG;
+						furnitureArray[x][y][i] = (char)BG;
+					}
+                		}
+          		} else { // "Steeper" line, loop on Y's
+                	 // y = mx + b, so
+                	 // x = ( y - b ) / m
+                		if ( y2 < y1 ) { // swap points to start on at lower Y
+                			temp = x1;   // value
+                			x1 = x2;
+                    			x2 = temp;
+                    			temp = y1;
+                    			y1 = y2;
+                    			y2 = temp;
+                		}
+                		for ( y = y1; y <= y2; y++ ) {
+                    			x = (int)( ( y - b ) / m );
+					for (int i = 0; i < 3; i++) {
+						furnitureArray[x][y][i] = C;
+						furnitureArray[x][y][i] = (char)FG;
+						furnitureArray[x][y][i] = (char)BG;
+					}
+                		}
+			}
+            	}
+        }
+
+	public void plotPoint(Scanner sc) {
+		
+	}
+	
+	public static void circle( int Cx, int Cy, float radius, char C, int FG, int BG, Canvas MyC ) {
+        	double start = 0.0;
+        	double stop  = Math.PI / 4.0;
+        	double step  = ( stop - start ) / 40;
+        	double angle = start;
+        	int    x     = 0;
+        	int    y     = 0;
+
+        	while ( angle < stop ) {
+        		x = (int)( radius * Math.cos( angle ) );
+            		y = (int)( radius * Math.sin( angle ) );
+            		MyC.plot( x + Cx, y + Cy, C, FG, BG );
+            		MyC.plot( y + Cx, x + Cy, C, FG, BG );
+            		MyC.plot( -x + Cx, y + Cy, C, FG, BG );
+            		MyC.plot( -y + Cx, x + Cy, C, FG, BG );
+            		MyC.plot( -x + Cx, -y + Cy, C, FG, BG );
+            		MyC.plot( -y + Cx, -x + Cy, C, FG, BG );
+            		MyC.plot( x + Cx, -y + Cy, C, FG, BG );
+            		MyC.plot( y + Cx, -x + Cy, C, FG, BG );
+            		angle += step;
+		}
+	}
+}
